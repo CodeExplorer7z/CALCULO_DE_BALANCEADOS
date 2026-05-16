@@ -241,7 +241,7 @@
             font-family: Arial, sans-serif;
         }
         .prof-header { text-align: center; border-bottom: 2px dashed #333; padding-bottom: 10px; margin-bottom: 15px; }
-        .prof-title { font-size: 1.4rem; font-weight: bold; color: #2c3e50; margin: 0; }
+        .prof-title { font-size: 1.1rem; font-weight: bold; color: #2c3e50; margin: 0; text-transform: uppercase; }
         .prof-date { font-size: 0.8rem; color: #666; margin-top: 5px; }
         .prof-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
         .prof-table th { border-bottom: 1px solid #333; text-align: left; padding: 6px; font-size: 0.85rem; color: #555; }
@@ -331,9 +331,10 @@
     </a>
 </div>
 
+<!-- AQUÍ SE CORRIGIÓ EL TÍTULO INTERNO PARA LA IMAGEN GENERADA -->
 <div id="proforma-template">
     <div class="prof-header">
-        <div class="prof-title">PROFORMA DE ALIMENTO</div>
+        <div class="prof-title">TIENDA ANTES DE CRUZAR AV. PACASMAYO</div>
         <div class="prof-date" id="prof-fecha"></div>
     </div>
     <table class="prof-table">
@@ -346,7 +347,7 @@
             </tr>
         </thead>
         <tbody id="prof-items">
-            </tbody>
+        </tbody>
     </table>
     <div class="prof-total-section">
         <div class="prof-total-row">
@@ -438,7 +439,7 @@
         
         html2canvas(element, { scale: 2, useCORS: true }).then(canvas => {
             const link = document.createElement('a');
-            link.download = `Proforma_Alimento_${ahora.toISOString().slice(0,10)}.png`;
+            link.download = `Proforma_Tienda_Pacasmayo_${ahora.toISOString().slice(0,10)}.png`;
             link.href = canvas.toDataURL('image/png');
             link.click();
         });
