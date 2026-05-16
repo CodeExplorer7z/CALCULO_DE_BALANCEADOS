@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Alimento Brahma</title>
+    <!-- Librería para convertir HTML a Imagen -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        :root {
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+            --primary-color: #2c3e50;
+            --accent-color: #27ae60;
+            --border-color: #dddddd;
+            --maps-color: #4285F4;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 480px;
+            background: var(--card-bg);
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            box-sizing: border-box;
+        }
+
+        h2 {
+            text-align: center;
+            color: var(--primary-color);
+            margin-top: 5px;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+            border-bottom: 2px solid var(--bg-color);
+            padding-bottom: 10px;
+        }
+
+        .table-header {
+            display: grid;
+            grid-template-columns: 2fr 1.1fr 1fr;
+            gap: 8px;
+            font-weight: bold;
+            font-size: 0.8rem;
+            color: #7f8c8d;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: 2fr 1.1fr 1fr;
+            gap: 8px;
+            align-items: center;
+            margin-bottom: 14px;
+        }
+
+        .alimento-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .alimento-label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+
+        .alimento-price-tag {
+            font-size: 0.75rem;
+            color: #7f8c8d;
+            margin-top: 3px;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 10px 5px;
+            box-sizing: border-box;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 1.1rem;
+            text-align: center;
+            -moz-appearance: textfield;
+        }
+
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        input[type="number"]:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            background-color: #fcfcfc;
+        }
+
+        .subtotal-box {
+            font-size: 0.95rem;
+            font-weight: bold;
+            text-align: right;
+            color: var(--primary-color);
+            white-space: nowrap;
+        }
+
+        .totals-section {
+            margin-top: 15px;
+            padding-top: 12px;
+            border-top: 2px solid var(--primary-color);
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1rem;
+            margin-bottom: 6px;
+        }
+
+        .total-row.final {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--accent-color);
+            background-color: #ebf7ee;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 8px;
+        }
+
+        /* Estilos de los Botones */
+        .btn-action {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-sizing: border-box;
+            text-decoration: none;
+        }
+
+        .btn-export {
+            background-color: #e67e22;
+            color: white;
+            box-shadow: 0 2px 5px rgba(230, 126, 34, 0.3);
+        }
+
+        .btn-maps-direct {
+            background-color: var(--maps-color);
+            color: white;
+            box-shadow: 0 2px 6px rgba(66, 133, 244, 0.4);
+            margin-top: 20px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 14px;
+            font-size: 1rem;
+        }
+
+        .btn-clear {
+            background-color: transparent;
+            color: #e74c3c;
+            border: 1px solid #e74c3c;
+            padding: 10px;
+            font-size: 0.85rem;
+            margin-top: 10px;
+        }
+
+        /* DISEÑO DE LA PROFORMA OCULTA (Para la descarga de foto) */
+        #proforma-template {
+            position: absolute;
+            left: -9999px;
+            top: -9999px;
+            width: 350px;
+            background: #ffffff;
+            padding: 25px;
+            color: #333333;
+            font-family: Arial, sans-serif;
+        }
+        .prof-header { text-align: center; border-bottom: 2px dashed #333; padding-bottom: 10px; margin-bottom: 15px; }
+        .prof-title { font-size: 1.4rem; font-weight: bold; color: #2c3e50; margin: 0; }
+        .prof-date { font-size: 0.8rem; color: #666; margin-top: 5px; }
+        .prof-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
+        .prof-table th { border-bottom: 1px solid #333; text-align: left; padding: 6px; font-size: 0.85rem; color: #555; }
+        .prof-table td { padding: 8px 6px; font-size: 0.9rem; border-bottom: 1px dashed #eee; }
+        .prof-total-section { border-top: 2px dashed #333; padding-top: 10px; text-align: right; }
+        .prof-total-row { display: flex; justify-content: space-between; font-size: 0.95rem; margin-bottom: 4px; }
+        .prof-total-final { font-size: 1.3rem; font-weight: bold; color: #27ae60; margin-top: 5px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>TIENDA COMIDA POLLO ANTES DE CRUZAR AVENIDA PACASMAYO</h2>
+
+    <div class="table-header">
+        <div>Alimento</div>
+        <div>Cant. (Kg)</div>
+        <div style="text-align: right;">Subtotal</div>
+    </div>
+
+    <!-- Filas de insumos -->
+    <div class="row" data-name="ALIMENTO DE POSTURA" data-price="3.20">
+        <div class="alimento-info">
+            <span class="alimento-label">ALIMENTO DE POSTURA</span>
+            <span class="alimento-price-tag">S/ 3.20 x Kg</span>
+        </div>
+        <input type="number" class="qty" placeholder="0" min="0" step="any">
+        <div class="subtotal-box">S/ 0.00</div>
+    </div>
+
+    <div class="row" data-name="TRIGO" data-price="2.50">
+        <div class="alimento-info">
+            <span class="alimento-label">TRIGO</span>
+            <span class="alimento-price-tag">S/ 2.50 x Kg</span>
+        </div>
+        <input type="number" class="qty" placeholder="0" min="0" step="any">
+        <div class="subtotal-box">S/ 0.00</div>
+    </div>
+
+    <div class="row" data-name="MAÍZ PARTIDO" data-price="2.00">
+        <div class="alimento-info">
+            <span class="alimento-label">MAÍZ PARTIDO</span>
+            <span class="alimento-price-tag">S/ 2.00 x Kg</span>
+        </div>
+        <input type="number" class="qty" placeholder="0" min="0" step="any">
+        <div class="subtotal-box">S/ 0.00</div>
+    </div>
+
+    <div class="row" data-name="CRECIMIENTO B12" data-price="3.20">
+        <div class="alimento-info">
+            <span class="alimento-label">CRECIMIENTO B12</span>
+            <span class="alimento-price-tag">S/ 3.20 x Kg</span>
+        </div>
+        <input type="number" class="qty" placeholder="0" min="0" step="any">
+        <div class="subtotal-box">S/ 0.00</div>
+    </div>
+
+    <!-- Resultados -->
+    <div class="totals-section">
+        <div class="total-row">
+            <span>Total Kilos:</span>
+            <span id="total-kilos">0.00 kg</span>
+        </div>
+        <div class="total-row final">
+            <span>PRECIO TOTAL:</span>
+            <span id="precio-total">S/ 0.00</span>
+        </div>
+    </div>
+
+    <!-- Botones de Acción -->
+    <button class="btn-action btn-export" onclick="exportProforma()">📸 Generar Proforma (Imagen)</button>
+    <button class="btn-action btn-clear" onclick="clearAll()">Limpiar Cantidades</button>
+
+    <!-- BOTÓN DE DIRECCIÓN DIRECTA A GOOGLE MAPS -->
+    <a href="https://maps.app.goo.gl/3k5Qe2df33ZdPuKP6" target="_blank" class="btn-action btn-maps-direct">
+        📍 Cómo llegar a la Tienda (Google Maps)
+    </a>
+</div>
+
+<!-- PLANTILLA OCULTA PARA CAPTURA DE IMAGEN -->
+<div id="proforma-template">
+    <div class="prof-header">
+        <div class="prof-title">PROFORMA DE ALIMENTO</div>
+        <div class="prof-date" id="prof-fecha"></div>
+    </div>
+    <table class="prof-table">
+        <thead>
+            <tr>
+                <th>Descripción</th>
+                <th style="text-align: center;">Cant.</th>
+                <th style="text-align: right;">P. Unit</th>
+                <th style="text-align: right;">Total</th>
+            </tr>
+        </thead>
+        <tbody id="prof-items">
+            <!-- Contenido dinámico -->
+        </tbody>
+    </table>
+    <div class="prof-total-section">
+        <div class="prof-total-row">
+            <span>Total Peso:</span>
+            <span id="prof-total-kg">0.00 kg</span>
+        </div>
+        <div class="prof-total-row prof-total-final">
+            <span>TOTAL A PAGAR:</span>
+            <span id="prof-total-money">S/ 0.00</span>
+        </div>
+    </div>
+</div>
+
+<script>
+    const rows = document.querySelectorAll('.row');
+    const totalKilosEl = document.getElementById('total-kilos');
+    const precioTotalEl = document.getElementById('precio-total');
+
+    function calculate() {
+        let totalKilos = 0;
+        let precioTotal = 0;
+
+        rows.forEach(row => {
+            const qty = parseFloat(row.querySelector('.qty').value) || 0;
+            const price = parseFloat(row.getAttribute('data-price'));
+            const subtotal = qty * price;
+            
+            totalKilos += qty;
+            precioTotal += subtotal;
+
+            row.querySelector('.subtotal-box').textContent = `S/ ${subtotal.toFixed(2)}`;
+        });
+
+        totalKilosEl.textContent = `${totalKilos.toFixed(2)} kg`;
+        precioTotalEl.textContent = `S/ ${precioTotal.toFixed(2)}`;
+    }
+
+    document.querySelectorAll('.qty').forEach(input => {
+        input.addEventListener('input', calculate);
+    });
+
+    function clearAll() {
+        document.querySelectorAll('.qty').forEach(input => input.value = '');
+        calculate();
+    }
+
+    function exportProforma() {
+        const profItemsTarget = document.getElementById('prof-items');
+        profItemsTarget.innerHTML = '';
+        
+        let totalKilos = 0;
+        let precioTotal = 0;
+        let tieneElementos = false;
+
+        const ahora = new Date();
+        document.getElementById('prof-fecha').textContent = ahora.toLocaleDateString() + ' ' + ahora.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+
+        rows.forEach(row => {
+            const qty = parseFloat(row.querySelector('.qty').value) || 0;
+            if (qty > 0) {
+                tieneElementos = true;
+                const name = row.getAttribute('data-name');
+                const price = parseFloat(row.getAttribute('data-price'));
+                const subtotal = qty * price;
+
+                totalKilos += qty;
+                precioTotal += subtotal;
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><b>${name}</b></td>
+                    <td style="text-align: center;">${qty.toFixed(2)} kg</td>
+                    <td style="text-align: right;">S/ ${price.toFixed(2)}</td>
+                    <td style="text-align: right;"><b>S/ ${subtotal.toFixed(2)}</b></td>
+                `;
+                profItemsTarget.appendChild(tr);
+            }
+        });
+
+        if (!tieneElementos) {
+            alert("Por favor, ingresa al menos una cantidad mayor a 0 antes de exportar.");
+            return;
+        }
+
+        document.getElementById('prof-total-kg').textContent = `${totalKilos.toFixed(2)} kg`;
+        document.getElementById('prof-total-money').textContent = `S/ ${precioTotal.toFixed(2)}`;
+
+        const element = document.getElementById('proforma-template');
+        
+        html2canvas(element, { scale: 2, useCORS: true }).then(canvas => {
+            const link = document.createElement('a');
+            link.download = `Proforma_Alimento_${ahora.toISOString().slice(0,10)}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        });
+    }
+</script>
+
+</body>
+</html>
